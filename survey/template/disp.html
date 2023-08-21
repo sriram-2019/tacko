@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Admin Login</h2>
+        <form action="process_login" method="post">
+            {% csrf_token %}
+            <label for="name">Username:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="password">OTP</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" id="sub" value="Login">
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("form").submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
+    
+                // Gather form data
+                var name = $("input[name='name']").val();
+                var password = $("input[name='password']").val();
+    
+                // Create a FormData object and append data to it
+                var formData = new FormData();
+                formData.append('name', name);
+                formData.append('password', password);
+    
+                // Get the CSRF token from the form
+                var csrfToken = $("input[name='csrfmiddlewaretoken']").val();
+    
+                // Include the CSRF token in the request headers
+                var headers = {
+                    'X-CSRFToken': csrfToken
+                };
+    
+                // Send data to the server via AJAX
+                $.ajax({
+                    type: "POST",
+                    url: "/administrator/process_login/",  // Replace with your Django URL
+                    data: formData,
+                    headers: headers, // Include CSRF token in headers
+                    processData: false, // Prevent jQuery from processing the data
+                    contentType: false, // Prevent jQuery from setting the content type
+                    success: function(response) {
+                        // Handle success (e.g., show a success message)
+                        alert(response.message);
+                    },
+                    error: function(error) {
+                        // Handle errors (e.g., display an error message)
+                        alert("Failed to send email: " + error.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    
+
+</body>
+</html>
